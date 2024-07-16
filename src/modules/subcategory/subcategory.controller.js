@@ -2,6 +2,7 @@ import { SubCategory } from "../../../database/models/subcategory.model.js"
 import slugify from "slugify"
 import { catchError } from "../../middleware/catchError.js"
 import { deleteOne, getOne, updateOne } from "../handlers/handlers.js"
+import { ApiFeatures } from "../../utils/apiFeatures.js"
 
 
 
@@ -13,14 +14,14 @@ const addSubCategory = catchError(async (req, res) => {
 })
 
 const allSubCategories = catchError(async (req, res) => {
-  let pageNumber = req.query.page * 1 || 1
-  if (pageNumber < 1) pageNumber = 1
-  const limit = 2
-  let skip = (parseInt(pageNumber) - 1) * limit
-  let filterObj = {};
-  if (req.params.category) filterObj.category = req.params.category
-  let SubCategories = await SubCategory.find(filterObj).skip(skip).limit(limit).populate("category")
-  res.status(200).json({ message: "success", pageNumber, SubCategories })
+  let filter = {};
+  if (req.params.category) filter.category = req.params.category  
+
+  let apiFeatures = new ApiFeatures(SubCategory.find(filter),req.query)
+  .pagination().sort().fields().search().filter() 
+
+  let subCategories = await apiFeatures.mongooseQuery.populate("category")
+  res.status(200).json({ message: "success", page: apiFeatures.pageNumber, subCategories })
 })
 
 const getSubCategory = getOne(SubCategory)

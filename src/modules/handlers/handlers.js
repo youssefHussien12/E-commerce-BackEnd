@@ -1,6 +1,7 @@
 import slugify from "slugify"
 import { catchError } from "../../middleware/catchError.js"
 import { AppError } from "../../utils/AppError.js"
+import { ApiFeatures } from "../../utils/apiFeatures.js"
 
 
 
@@ -22,12 +23,10 @@ const getOne = (model) => {
 
 const getAll = (model) => {
     return catchError(async (req, res) => {
-        let pageNumber = req.query.page * 1 || 1
-        if (pageNumber < 1) pageNumber = 1
-        const limit = 2
-        let skip = (parseInt(pageNumber) - 1) * limit
-        let document = await model.find().skip(skip).limit(limit)
-        res.status(200).json({ message: "success",pageNumber, document })
+        let apiFeatures = new ApiFeatures(model.find(), req.query)
+        .pagination().sort().fields().search().filter()
+        let products = await apiFeatures.mongooseQuery
+        res.status(200).json({ message: "success", page: apiFeatures.pageNumber, products })
     })
 }
 

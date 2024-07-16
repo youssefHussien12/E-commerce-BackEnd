@@ -2,6 +2,7 @@ import { Product } from "../../../database/models/product.model.js"
 import slugify from "slugify"
 import { catchError } from "../../middleware/catchError.js"
 import { deleteOne, getOne, updateOne } from "../handlers/handlers.js"
+import { ApiFeatures } from "../../utils/apiFeatures.js"
 
 
 
@@ -15,15 +16,10 @@ const addProduct = catchError(async (req, res) => {
 })
 
 const allProducts = catchError(async (req, res) => {
-    let pageNumber = req.query.page * 1 || 1
-    if (pageNumber < 1) pageNumber = 1
-    const limit = 2
-    let skip = (parseInt(pageNumber) - 1) * limit
-    let Products = await Product.find().skip(skip).limit(limit)
-        .populate("category")
-        .populate("Subcategory")
-        .populate("brand")
-    res.status(200).json({ message: "success",pageNumber, Products })
+    let apiFeatures = new ApiFeatures(Product.find(), req.query)
+    .pagination().sort().fields().search().filter()
+    let products = await apiFeatures.mongooseQuery.populate("category").populate("Subcategory").populate("brand")
+    res.status(200).json({ message: "success", page: apiFeatures.pageNumber, products })
 })
 
 const getProduct = getOne(Product)
