@@ -61,12 +61,29 @@ const schema = new Schema({
         type: Types.ObjectId,
         ref: "User"
     }
-}, { timestamps: true, versionKey: false })
+}, { timestamps: true, versionKey: false, toJSON: { virtuals: true }, id: false })
+
+
+schema.virtual('Reviews', {
+    ref: 'Review',
+    localField: '_id',
+    foreignField: 'product'
+});
+
+schema.pre("findOne", function () {
+    this.populate("Reviews")
+})
+
+schema.pre(/^find/, function () {
+    this.populate("category").populate("Subcategory").populate("brand")
+})
 
 
 schema.post('init', function (doc) {
-    if (doc.imageCover) doc.imageCover = "http://localhost:3000/uploads/products/" + doc.imageCover
-    if (doc.images) doc.images = doc.images.map(img => "http://localhost:3000/uploads/products/" + img)
+    if (doc.imageCover) doc.imageCover = process.env.BASE_URL + "products/" + doc.imageCover
+    if (doc.images) doc.images = doc.images.map(img => process.env.BASE_URL + "products/" + img)
 })
+
+
 
 export const Product = model('Product', schema)

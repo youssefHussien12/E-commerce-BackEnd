@@ -7,7 +7,7 @@ import { deleteOne, getAll, getOne, updateOne } from "../handlers/handlers.js"
 
 const addBrand = catchError(async (req, res) => {
     req.body.slug = slugify(req.body.name)
-    if (req.file) req.body.logo = req.file.filename
+    if (req.file) req.body.image = req.file.filename
     let brand = new Brand(req.body)
     await brand.save()
     res.status(201).json({ message: "success", brand })

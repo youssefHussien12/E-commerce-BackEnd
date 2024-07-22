@@ -1,18 +1,19 @@
 import { Router } from "express";
 import { addBrand, allBrands, deleteBrand, getBrand, updateBrand } from "./brand.controller.js";
 import { uploadSingelFile } from "../../fileUpload/fileUpload.js";
+import { allowedTo, protectedRoutes } from "../auth/auth.controller.js";
 
 
 const brandRouter = Router()
 
 brandRouter
     .route("/")
-    .post(uploadSingelFile("logo",'brands'),addBrand)
+    .post(protectedRoutes,allowedTo("admin"),uploadSingelFile("image",'brands'),addBrand)
     .get(allBrands)
 brandRouter
     .route("/:id")
     .get(getBrand)
-    .put(uploadSingelFile("logo",'brands'),updateBrand)
-    .delete(deleteBrand)
+    .put(protectedRoutes,allowedTo("admin"),uploadSingelFile("image",'brands'),updateBrand)
+    .delete(protectedRoutes,allowedTo("admin","mgr"),deleteBrand)
 
 export default brandRouter

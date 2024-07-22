@@ -21,5 +21,9 @@ const schema = new Schema({
    }
 }, { timestamps: true, versionKey: false })
 
+schema.pre(/^find/, function () {
+   this.populate("user","name")
+})
+
 
 export const Review = model('Review', schema)
