@@ -23,12 +23,13 @@ app.post('/api/webhook', express.raw({ type: 'application/json' }), catchError(a
     if (event.type == "checkout.session.completed") {
         checkout = event.data.object;
 
+        // get user 
+        let user = await User.findOne({ email: checkout.customer_email })
+
         //1-get user cart by cartId
         let cart = await Cart.findById(checkout.client_reference_id)
         !cart ? next(new AppError("cart not found", 404)) : null
 
-        // get user 
-        let user = await User.findOne({ email: checkout.customer_email })
 
         //3-create order
         let order = new Order({
@@ -36,7 +37,7 @@ app.post('/api/webhook', express.raw({ type: 'application/json' }), catchError(a
             orderItems: cart.cartItems,
             shippingAddress: checkout.metadata,
             totalOrderPrice: checkout.amount_total / 100,
-            paymentType: "crad",
+            paymentType: "card",
             isPaid: true
         })
         await order.save()
