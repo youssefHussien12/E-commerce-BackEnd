@@ -17,7 +17,7 @@ const port = process.env.PORT || 3000
 app.use(cors())
 
 app.post('/api/webhook', express.raw({ type: 'application/json' }), catchError(async (req, res) => {
-    const sig = req.headers['stripe-signature'];
+    const sig = req.headers['stripe-signature'].toString()
     let event = stripe.webhooks.constructEvent(req.body, sig, "whsec_T2DiAj099Qzwu0d8wxD8cTjUqL2MLtd0");
     let checkout;
     if (event.type == "checkout.session.completed") {
