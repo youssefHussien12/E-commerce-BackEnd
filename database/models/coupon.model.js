@@ -1,13 +1,9 @@
-import { model, Schema, Types } from "mongoose";
+import { model, Schema } from "mongoose";
 
 
 
 const schema = new Schema({
-    code: {
-        type: String,
-        unique: true,
-        required: true
-    },
+    code:String,
     expires: Date,
     discount: Number
 }, { timestamps: true, versionKey: false })

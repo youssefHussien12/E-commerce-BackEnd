@@ -23,6 +23,8 @@ const getOne = (model) => {
         !document || res.status(200).json({ message: "success", data: document })
     })
 }
+
+
 const updateOne = (model) => {
     return catchError(async (req, res, next) => {
         if (req.body.name) {

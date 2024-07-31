@@ -25,9 +25,5 @@ const schema = new Schema({
     }
 }, { timestamps: true, versionKey: false })
 
-schema.pre(/^find/, function () {
-    this.populate("category")
-})
-
 
 export const SubCategory = model('SubCategory', schema)
