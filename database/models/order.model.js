@@ -1,4 +1,5 @@
 import { model, Schema, Types } from "mongoose";
+import { paymentType } from "../../src/utils/common/enum.js";
 
 const schema = new Schema({
 
@@ -18,8 +19,8 @@ const schema = new Schema({
     },
     paymentType: {
         type: String,
-        enum: ["cash", "card"],
-        default: "cash"
+        enum: Object.values(paymentType),
+        default: paymentType.CASH
     },
     isPaid: {
         type: Boolean,

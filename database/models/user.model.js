@@ -1,5 +1,6 @@
 import { model, Schema, Types } from "mongoose";
 import bcrypt from 'bcrypt'
+import { systemRole } from "../../src/utils/common/enum.js";
 
 
 
@@ -13,12 +14,12 @@ const schema = new Schema({
     },
     role: {
         type: String,
-        enum: ["admin", "user"],
-        default: "user"
+        enum: Object.values(systemRole),
+        default: systemRole.USER
     },
     passwordChanagedAt: Date,
     wishlist: [{ type: Types.ObjectId, ref: "Product" }],
-    addresses:[ {
+    addresses: [{
         city: String,
         phone: String,
         street: String
